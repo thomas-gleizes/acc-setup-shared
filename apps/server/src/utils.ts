@@ -6,7 +6,23 @@ import { DB, Entry } from "./types";
 const databasePath = "./setup.json";
 
 function readDb(): Promise<DB> {
-  return fs.readFile(databasePath, "utf-8").then((data) => JSON.parse(data));
+  return fs.readFile(databasePath, "utf-8").then((data) => {
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.log("=========");
+      console.log("=========");
+      console.log("=========");
+      console.log("=========");
+      console.log("=========");
+      console.log("=========");
+      console.log("=========");
+      console.log("=========");
+      console.log("=========");
+      console.log("=========");
+      console.log("DATA ICI A VOIR", data);
+    }
+  });
 }
 
 function saveDB(db: DB): Promise<void> {
