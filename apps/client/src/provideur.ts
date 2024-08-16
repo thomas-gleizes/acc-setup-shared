@@ -11,7 +11,7 @@ configDotenv.config({
 fs.watch(process.env.FILE, { recursive: true }, async (eventType, filename) => {
   console.log(eventType, filename);
 
-  if (!isFile(filename)) return;
+  if (!filename || !isFile(filename)) return;
 
   try {
     if (eventType === "rename") {
@@ -66,7 +66,7 @@ async function uploadSetup(filename: string) {
     setup: readSetup(filename),
   };
 
-  const response = await fetch("http://localhost:3000/entry", {
+  const response = await fetch("https://acc-shareure.thomasgleizes.fr/entry", {
     body: JSON.stringify(payload),
     method: "POST",
     headers: {
@@ -74,7 +74,7 @@ async function uploadSetup(filename: string) {
     },
   }).then((resp) => resp.json());
 
-  // console.log("Response", response);
+  console.log("Response", response);
 }
 
 function removeSetup(filename: string) {}
