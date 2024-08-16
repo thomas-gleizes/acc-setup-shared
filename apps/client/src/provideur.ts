@@ -11,19 +11,19 @@ configDotenv.config({
 const debounceDelay = 1000;
 const timeouts: { [key: string]: NodeJS.Timeout } = {};
 
-fs.watch(process.env.FILE, { recursive: true }, async (eventType, filename) => {
-  console.log(eventType, filename);
+fs.watch(process.env.FILE as string, { recursive: true }, async (eventType, filename) => {
+  // console.log(eventType, filename);
 
   if (!filename || !isFile(filename)) return;
 
-  const filePath = path.join(process.env.FILE, filename);
+  const filePath = path.join(process.env.FILE as string, filename);
 
   if (timeouts[filePath]) {
     clearTimeout(timeouts[filePath]);
   }
 
   timeouts[filePath] = setTimeout(async () => {
-    delete timeouts[filePath]; // Nettoyer l'entrée du fichier dans les timeouts
+    delete timeouts[filePath];
     try {
       if (eventType === "rename") {
         if (fs.existsSync(filePath)) {
@@ -67,7 +67,7 @@ function readSetup(filename: string) {
   const filePath = `${process.env.FILE}/${filename}`;
   const rawContent = fs.readFileSync(filePath, 'utf-8');
 
-  console.log(`Raw content of ${filename}:`, rawContent);
+  // console.log(`Raw content of ${filename}:`, rawContent);
 
   try {
     return JSON.parse(rawContent);
@@ -81,6 +81,9 @@ function readSetup(filename: string) {
 async function uploadSetup(filename: string) {
   const { file, paths } = extractFromFilename(filename);
 
+  if (file.includes("Jardier"))
+    return;
+
   let payload;
   try {
     payload = {
@@ -88,12 +91,11 @@ async function uploadSetup(filename: string) {
       path: paths,
       setup: readSetup(filename),
     };
-    console.log("Payload being sent to the server:", JSON.stringify(payload, null, 2));
+    console.log("Setup being sent to the server:", payload.name, '\n');
   } catch (error) {
     console.error("Error creating payload:", error);
     return;
   }
-
 
   try {
     const response = await fetch("https://acc-shareure.thomasgleizes.fr/entry", {
@@ -107,8 +109,8 @@ async function uploadSetup(filename: string) {
     const responseText = await response.text();
     console.log("Raw response from server:", responseText);
 
-    const jsonResponse = JSON.parse(responseText);
-    console.log("Parsed JSON response:", jsonResponse);
+    // const jsonResponse = JSON.parse(responseText);
+    // console.log("Parsed JSON response:", jsonResponse);
   } catch (error) {
     console.error("Error in uploadSetup:", error);
   }
