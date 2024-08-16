@@ -31,7 +31,7 @@ fs.watch(process.env.FILE as string, { recursive: true }, async (eventType, file
           // console.log("Created", filename);
           await uploadSetup(filename);
         } else {
-          // REMOVE
+          //todo REMOVE
           // console.log("remove", filename);
           await removeSetup(filename);
         }
@@ -91,7 +91,7 @@ async function uploadSetup(filename: string) {
       path: paths,
       setup: readSetup(filename),
     };
-    console.log("Setup being sent to the server:", payload.name, '\n');
+    console.log("Setup being sent to the server:", payload.name, "...");
   } catch (error) {
     console.error("Error creating payload:", error);
     return;
@@ -113,7 +113,7 @@ async function uploadSetup(filename: string) {
       const jsonResponse = JSON.parse(responseText);
       const { id, name, path, createdAt } = jsonResponse.setup;
 
-      console.log(`Setup ID: ${id} (${name}) a été enregistré avec succès.`);
+      console.log("\n", `Setup ID: ${id} (${name}) a été enregistré avec succès.`);
       console.log(`Emplacement: distant/${path}`);
       console.log(`Date de création: ${new Date(createdAt).toLocaleString()}`);
     } catch (error) {
