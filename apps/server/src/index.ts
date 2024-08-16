@@ -27,7 +27,7 @@ app.post("/entry", async (c) => {
 
   const id = await generateId(data.name, data.path);
 
-  const setup = prisma.setup.upsert({
+  const setup = await prisma.setup.upsert({
     where: { hash: id },
     create: {
       hash: id,
