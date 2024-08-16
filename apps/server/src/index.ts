@@ -20,19 +20,21 @@ app.use(async (ctx, next) => {
 });
 
 app.post("/entry", async (c) => {
-  const data = await c.req.json();
+  try {
+    const data = await c.req.json();
 
-  const [id, needEmit] = await addToDb({
-    name: data.name,
-    path: data.path.join("/"),
-    setup: data.setup,
-  });
+    const [id, needEmit] = await addToDb({
+      name: data.name,
+      path: data.path.join("/"),
+      setup: data.setup,
+    });
 
-  console.log("needEmit", needEmit);
+    if (needEmit) emitter.emit("message", id);
 
-  if (needEmit) emitter.emit("message", id);
-
-  return c.json({ data });
+    return c.json({ data });
+  } catch (error) {
+    console.error(error, c.req);
+  }
 });
 
 app.get("/listen", (c) => {
@@ -61,7 +63,13 @@ app.get("/listen", (c) => {
 });
 
 app.get("/entry/:id", async (c) => {
-  return c.json({ entry: await findById(c.req.param("id")) });
+  const entry = await findById(c.req.param("id"));
+
+  if (!entry) {
+    throw new Error("Entry not found");
+  }
+
+  return c.json({ entry });
 });
 
 const port = process.env.PORT;
