@@ -4,10 +4,20 @@ import { streamText } from "hono/streaming";
 import { Hono } from "hono";
 
 import { addToDb, findById } from "./utils";
+import { configDotenv } from "dotenv";
+
+configDotenv.config({
+  path: "../../.env",
+});
 
 const emitter = new EventEmitter();
 
 const app = new Hono();
+
+app.use(async (ctx, next) => {
+  await next();
+  console.log(`${ctx.req.method} (${ctx.res.status}) ${ctx.req.path}`);
+});
 
 app.post("/entry", async (c) => {
   const data = await c.req.json();
@@ -54,7 +64,7 @@ app.get("/entry/:id", async (c) => {
   return c.json({ entry: await findById(c.req.param("id")) });
 });
 
-const port = 3000;
+const port = process.env.PORT;
 console.log(`Server is running on port ${port}`);
 
 serve({ fetch: app.fetch, port });
