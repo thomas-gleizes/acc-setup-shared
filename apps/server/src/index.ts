@@ -32,7 +32,7 @@ app.post("/entry", async (c) => {
     create: {
       hash: id,
       name: data.name,
-      path: data.path,
+      path: data.path.join("/"),
       setup: JSON.stringify(data.setup),
     },
     update: {
