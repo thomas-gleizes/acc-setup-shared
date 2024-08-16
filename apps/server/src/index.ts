@@ -4,7 +4,7 @@ import { streamText } from "hono/streaming";
 import { Hono } from "hono";
 
 import { addToDb, findById } from "./utils";
-import { configDotenv } from "dotenv";
+import configDotenv from "dotenv";
 
 configDotenv.config({
   path: "../../.env",
