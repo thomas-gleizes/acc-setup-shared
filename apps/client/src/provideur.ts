@@ -109,8 +109,16 @@ async function uploadSetup(filename: string) {
     const responseText = await response.text();
     console.log("Raw response from server:", responseText);
 
-    // const jsonResponse = JSON.parse(responseText);
-    // console.log("Parsed JSON response:", jsonResponse);
+    try {
+      const jsonResponse = JSON.parse(responseText);
+      const { id, name, path, createdAt } = jsonResponse.setup;
+
+      console.log(`Setup ID: ${id} (${name}) a été enregistré avec succès.`);
+      console.log(`Emplacement: distant/${path}`);
+      console.log(`Date de création: ${new Date(createdAt).toLocaleString()}`);
+    } catch (error) {
+      console.error("Error parsing server response:", error);
+    }
   } catch (error) {
     console.error("Error in uploadSetup:", error);
   }
