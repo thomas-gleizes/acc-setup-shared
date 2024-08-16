@@ -1,0 +1,168 @@
+POST http://localhost:3000/la-route
+Content-Type: application/json
+
+{
+  "path": [
+    "ferrari_296_gt3",
+    "monza"
+  ],
+  "name": "27c_35c_CDA_M_LFM_Q_DRY_01.json",
+  "setup": {
+    "carName": "ferrari_296_gt3",
+    "basicSetup": {
+      "tyres": {
+        "tyreCompound": 0,
+        "tyrePressure": [
+          46,
+          56,
+          46,
+          53
+        ]
+      },
+      "alignment": {
+        "camber": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "toe": [
+          0,
+          0,
+          50,
+          50
+        ],
+        "staticCamber": [
+          -4.699929237365723,
+          -4.69349479675293,
+          -4.493189811706543,
+          -4.488402366638184
+        ],
+        "toeOutLinear": [
+          0.0004500500508584082,
+          0.0004500464419834316,
+          0.00033866779995150864,
+          0.0003386508906260133
+        ],
+        "casterLF": 30,
+        "casterRF": 30,
+        "steerRatio": 2
+      },
+      "electronics": {
+        "tC1": 5,
+        "tC2": 0,
+        "abs": 2,
+        "eCUMap": 0,
+        "fuelMix": 0,
+        "telemetryLaps": 5
+      },
+      "strategy": {
+        "fuel": 10,
+        "nPitStops": 0,
+        "tyreSet": 2,
+        "frontBrakePadCompound": 0,
+        "rearBrakePadCompound": 0,
+        "pitStrategy": [
+          {
+            "fuelToAdd": 0,
+            "tyres": {
+              "tyreCompound": 0,
+              "tyrePressure": [
+                46,
+                56,
+                46,
+                53
+              ]
+            },
+            "tyreSet": 2,
+            "frontBrakePadCompound": 1,
+            "rearBrakePadCompound": 1
+          }
+        ],
+        "fuelPerLap": 2.8730995655059814
+      }
+    },
+    "advancedSetup": {
+      "mechanicalBalance": {
+        "aRBFront": 5,
+        "aRBRear": 0,
+        "wheelRate": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bumpStopRateUp": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bumpStopRateDn": [
+          0,
+          0,
+          10,
+          10
+        ],
+        "bumpStopWindow": [
+          5,
+          5,
+          30,
+          30
+        ],
+        "brakeTorque": 20,
+        "brakeBias": 30
+      },
+      "dampers": {
+        "bumpSlow": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bumpFast": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "reboundSlow": [
+          11,
+          11,
+          11,
+          11
+        ],
+        "reboundFast": [
+          11,
+          11,
+          11,
+          11
+        ]
+      },
+      "aeroBalance": {
+        "rideHeight": [
+          0,
+          6,
+          2,
+          18
+        ],
+        "rodLength": [
+          36.150543212890625,
+          36.150543212890625,
+          36.82166290283203,
+          36.82166290283203
+        ],
+        "splitter": 0,
+        "rearWing": 4,
+        "brakeDuct": [
+          2,
+          3
+        ]
+      },
+      "drivetrain": {
+        "preload": 0
+      }
+    },
+    "trackBopType": 32
+  }
+}
