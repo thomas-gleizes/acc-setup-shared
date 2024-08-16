@@ -33,10 +33,10 @@ app.post("/entry", async (c) => {
       hash: id,
       name: data.name,
       path: data.path,
-      setup: data.setup,
+      setup: JSON.stringify(data.setup),
     },
     update: {
-      setup: data.setup,
+      setup: JSON.stringify(data.setup),
     },
   });
 
