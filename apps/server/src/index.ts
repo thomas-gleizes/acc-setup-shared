@@ -27,16 +27,16 @@ app.post("/entry", async (c) => {
 
   const id = await generateId(data.name, data.path);
 
-  const setup = prisma.setup.upsert({
+  const setup = await prisma.setup.upsert({
     where: { hash: id },
     create: {
       hash: id,
       name: data.name,
-      path: data.path,
-      setup: data.setup,
+      path: data.path.join("/"),
+      setup: JSON.stringify(data.setup),
     },
     update: {
-      setup: data.setup,
+      setup: JSON.stringify(data.setup),
     },
   });
 

@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./db/dev.db"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Setup {
@@ -12,7 +12,7 @@ model Setup {
   hash      String   @unique
   name      String
   path      String
-  setup     String
+  setup     String   @db.LongText
   createdAt DateTime @default(now())
 
   @@map("setups")
