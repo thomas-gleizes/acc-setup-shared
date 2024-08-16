@@ -4,3 +4,4 @@ node_modules
 apps/client/package-lock.json
 apps/client/package.json
 apps/client/package.json
+/apps/server/db/
