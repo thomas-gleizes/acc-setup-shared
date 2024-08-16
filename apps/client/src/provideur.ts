@@ -107,7 +107,7 @@ async function uploadSetup(filename: string) {
     });
 
     const responseText = await response.text();
-    console.log("Raw response from server:", responseText);
+    // console.log("Raw response from server:", responseText);
 
     try {
       const jsonResponse = JSON.parse(responseText);
