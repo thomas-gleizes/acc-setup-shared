@@ -3,12 +3,15 @@ import { serve } from "@hono/node-server";
 import { streamText } from "hono/streaming";
 import { Hono } from "hono";
 
-import { addToDb, findById } from "./utils";
+import { generateId } from "./utils";
 import configDotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";
 
 configDotenv.config({
   path: "../../.env",
 });
+
+const prisma = new PrismaClient();
 
 const emitter = new EventEmitter();
 
@@ -20,21 +23,26 @@ app.use(async (ctx, next) => {
 });
 
 app.post("/entry", async (c) => {
-  try {
-    const data = await c.req.json();
+  const data = await c.req.json();
 
-    const [id, needEmit] = await addToDb({
+  const id = await generateId(data.name, data.path);
+
+  const setup = prisma.setup.upsert({
+    where: { hash: id },
+    create: {
+      hash: id,
       name: data.name,
-      path: data.path.join("/"),
+      path: data.path,
       setup: data.setup,
-    });
+    },
+    update: {
+      setup: data.setup,
+    },
+  });
 
-    if (needEmit) emitter.emit("message", id);
+  emitter.emit("message", setup);
 
-    return c.json({ data });
-  } catch (error) {
-    console.error(error, c.req);
-  }
+  return c.json({ setup });
 });
 
 app.get("/listen", (c) => {
@@ -63,16 +71,20 @@ app.get("/listen", (c) => {
 });
 
 app.get("/entry/:id", async (c) => {
-  const entry = await findById(c.req.param("id"));
+  const setup = await prisma.setup.findUnique({
+    where: {
+      hash: c.req.param("id"),
+    },
+  });
 
-  if (!entry) {
-    throw new Error("Entry not found");
+  if (!setup) {
+    throw new Error("Setup not found");
   }
 
-  return c.json({ entry });
+  return c.json({ setup });
 });
 
-const port = process.env.PORT;
+const port = process.env.PORT || "8010";
 console.log(`Server is running on port ${port}`);
 
-serve({ fetch: app.fetch, port });
+serve({ fetch: app.fetch, port: +port });
