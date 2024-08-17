@@ -2,14 +2,12 @@ import EventEmitter from "node:events";
 import { serve } from "@hono/node-server";
 import { streamText } from "hono/streaming";
 import { Hono } from "hono";
-
-import { generateId } from "./utils";
-import configDotenv from "dotenv";
+import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 
-configDotenv.config({
-  path: "../../.env",
-});
+import { generateId } from "./utils";
+
+dotenv.config({ path: "../../.env" });
 
 const prisma = new PrismaClient();
 
