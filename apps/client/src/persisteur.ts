@@ -50,3 +50,5 @@ async function persist(id: string) {
     "utf-8",
   );
 }
+
+listen();
