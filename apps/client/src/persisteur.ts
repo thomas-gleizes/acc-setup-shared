@@ -1,34 +1,33 @@
 import http from "node:http";
 import fs from "node:fs";
-import configDotenv from "dotenv";
+import { config } from "dotenv";
 
-configDotenv.config({
-  path: "../../.env",
-});
+config({ path: "../../.env" });
 
 const abort = new AbortController();
 const url = "http://localhost:3000/listen";
 
-http.get(url, { signal: abort.signal }, (response) => {
-  response.on("data", async (data: Buffer) => {
-    console.log(data.toString());
-    const message = data.toString().replaceAll('"', "");
+const listen = () => {
+  http.get(url, { signal: abort.signal }, (response) => {
+    response.on("data", async (data: Buffer) => {
+      console.log(data.toString());
+      const message = data.toString().replaceAll('"', "");
 
-    if (message === "waiting") return;
+      if (message === "waiting") return;
 
-    await persist(message);
+      await persist(message);
+    });
+
+    process.on("SIGINT", () => {
+      console.log("exist");
+      process.exit(1);
+    });
+
+    response.on("close", () => {
+      listen();
+    });
   });
-
-  process.on("SIGINT", () => {
-    abort.abort();
-    response.destroy();
-  });
-
-  response.on("close", () => {
-    console.log("Connection closed");
-    process.exit(0);
-  });
-});
+};
 
 async function persist(id: string) {
   const response = await fetch(`http://localhost:3000/entry/${id}`, {
