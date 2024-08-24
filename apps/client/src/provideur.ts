@@ -78,7 +78,7 @@ function readSetup(filename: string) {
   }
 }
 
-async function uploadSetup(filename: string) {
+function uploadSetup(filename: string) {
   const { file, paths } = extractFromFilename(filename);
 
   if (file.includes("Jardier"))
@@ -97,31 +97,26 @@ async function uploadSetup(filename: string) {
     return;
   }
 
-  try {
-    const response = await fetch("https://acc-shareure.thomasgleizes.fr/entry", {
-      body: JSON.stringify(payload),
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  fetch("https://acc-shareure.thomasgleizes.fr/entry", {
+    body: JSON.stringify(payload),
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(response => response.json())
+    .then(jsonResponse => {
+      // console.log("Raw response from server:", jsonResponse);
+      const { name, path, createdAt } = jsonResponse.setup;
+      console.log(
+        `\nSetup ID: ${name} a été enregistré avec succès.\n` +
+        `Emplacement: distant/${path}\n` +
+        `Date de création: ${new Date(createdAt).toLocaleString()}`
+      );        
+    })
+    .catch(error => {
+      console.error("Error in uploadSetup:", error);
     });
-
-    const responseText = await response.text();
-    // console.log("Raw response from server:", responseText);
-
-    try {
-      const jsonResponse = JSON.parse(responseText);
-      const { id, name, path, createdAt } = jsonResponse.setup;
-
-      console.log("\n", `Setup ID: ${id} (${name}) a été enregistré avec succès.`);
-      console.log(`Emplacement: distant/${path}`);
-      console.log(`Date de création: ${new Date(createdAt).toLocaleString()}`);
-    } catch (error) {
-      console.error("Error parsing server response:", error);
-    }
-  } catch (error) {
-    console.error("Error in uploadSetup:", error);
-  }
 }
 
 function removeSetup(filename: string) {}
