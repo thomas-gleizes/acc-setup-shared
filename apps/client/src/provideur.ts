@@ -1,22 +1,20 @@
 import fs from "node:fs";
 import path from "node:path";
-import configDotenv from "dotenv";
+import { config } from "dotenv";
 
-configDotenv.config({
-  path: "../../.env",
-});
-
-// console.log(process.env.FILE);
+config({ path: "../../.env" });
 
 const debounceDelay = 1000;
 const timeouts: { [key: string]: NodeJS.Timeout } = {};
 
-fs.watch(process.env.FILE as string, { recursive: true }, async (eventType, filename) => {
+const SETUP_PATH = process.env.FILE as string;
+
+fs.watch(SETUP_PATH, { recursive: true }, async (eventType, filename) => {
   // console.log(eventType, filename);
 
   if (!filename || !isFile(filename)) return;
 
-  const filePath = path.join(process.env.FILE as string, filename);
+  const filePath = path.join(SETUP_PATH, filename);
 
   if (timeouts[filePath]) {
     clearTimeout(timeouts[filePath]);
@@ -65,7 +63,7 @@ function readSetup(filename: string) {
   if (extension !== "json") throw new Error("Invalid file extension");
 
   const filePath = `${process.env.FILE}/${filename}`;
-  const rawContent = fs.readFileSync(filePath, 'utf-8');
+  const rawContent = fs.readFileSync(filePath, "utf-8");
 
   // console.log(`Raw content of ${filename}:`, rawContent);
 
@@ -81,8 +79,7 @@ function readSetup(filename: string) {
 function uploadSetup(filename: string) {
   const { file, paths } = extractFromFilename(filename);
 
-  if (file.includes("Jardier"))
-    return;
+  if (file.includes("Jardier")) return;
 
   let payload;
   try {
@@ -104,17 +101,17 @@ function uploadSetup(filename: string) {
       "Content-Type": "application/json",
     },
   })
-    .then(response => response.json())
-    .then(jsonResponse => {
+    .then((response) => response.json())
+    .then((jsonResponse) => {
       // console.log("Raw response from server:", jsonResponse);
       const { name, path, createdAt } = jsonResponse.setup;
       console.log(
         `\nSetup ID: ${name} a été enregistré avec succès.\n` +
-        `Emplacement: distant/${path}\n` +
-        `Date de création: ${new Date(createdAt).toLocaleString()}`
-      );        
+          `Emplacement: distant/${path}\n` +
+          `Date de création: ${new Date(createdAt).toLocaleString()}`,
+      );
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("Error in uploadSetup:", error);
     });
 }

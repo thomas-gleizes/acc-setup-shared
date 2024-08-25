@@ -1,21 +1,36 @@
-import http from "node:http";
+import http from "node:https";
 import fs from "node:fs";
 import { config } from "dotenv";
 
 config({ path: "../../.env" });
 
+const API_URL = process.env.API;
+const SETUP_PATH = process.env.FILE;
+
 const abort = new AbortController();
-const url = "http://localhost:3000/listen";
 
 const listen = () => {
-  http.get(url, { signal: abort.signal }, (response) => {
+  http.get(`${API_URL}/listen`, { signal: abort.signal }, (response) => {
+    console.log("Connection start");
+
     response.on("data", async (data: Buffer) => {
-      console.log(data.toString());
-      const message = data.toString().replaceAll('"', "");
+      const message = data.toString();
+      console.log("Message", message.trim());
+      try {
+        const content = JSON.parse(message);
+        const path = `${SETUP_PATH}/${content.path}`;
 
-      if (message === "waiting") return;
-
-      await persist(message);
+        console.log("content", content.path, content.name);
+        fs.mkdirSync(path, { recursive: true });
+        fs.writeFileSync(
+          `${SETUP_PATH}/${content.path}/${content.name}`,
+          content.setup,
+          "utf-8",
+        );
+      } catch (error) {
+        // @ts-ignore
+        console.log("Error.message", error.message);
+      }
     });
 
     process.on("SIGINT", () => {
@@ -24,31 +39,10 @@ const listen = () => {
     });
 
     response.on("close", () => {
+      console.log("Connection closed");
       listen();
     });
   });
 };
-
-async function persist(id: string) {
-  const response = await fetch(`http://localhost:3000/entry/${id}`, {
-    method: "GET",
-  }).then((resp) => resp.json());
-
-  if (!response.entry) return;
-
-  const { entry } = response;
-
-  console.log("Entry", entry);
-
-  const dir = `C:/Users/thoma/Desktop/SETUp/${entry.path}`;
-
-  fs.mkdirSync(dir, { recursive: true });
-
-  fs.writeFileSync(
-    `${dir}/${entry.name}`,
-    new Buffer(JSON.stringify(entry.setup)),
-    "utf-8",
-  );
-}
 
 listen();
